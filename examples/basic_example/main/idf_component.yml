@@ -1,0 +1,5 @@
+dependencies:
+  fmazz97/DualBlinkCpp:
+    git: https://github.com/FMazz97/DualBlinkCpp.git
+    version: "*"
+    override_path: "../../../"

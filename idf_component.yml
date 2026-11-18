@@ -1,0 +1,21 @@
+version: "1.0.0"
+description: Minimal example of a C++ library with a compile-time HAL shared by both frameworks, implementing a non-blocking blink, native to Arduino and ESP-IDF
+url: https://github.com/FMazz97/DualBlinkCpp
+repository: https://github.com/FMazz97/DualBlinkCpp.git
+documentation: "https://github.com/FMazz97/DualBlinkCpp#readme"
+issues: "https://github.com/FMazz97/DualBlinkCpp/issues"
+maintainers:
+  - "FMazz97"
+
+dependencies:
+  idf: ">=5.0"
+
+examples:
+- path: ./examples/basic_example
+
+files:
+  exclude:
+    - "library.properties"
+    - "library.json"
+    - "src/DualBlinkCpp.h"                      # Arduino's facade *
+    - "src/hal/dual_blink_cpp_hal_arduino.h"    # Arduino's HAL *

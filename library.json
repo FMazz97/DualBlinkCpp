@@ -1,0 +1,62 @@
+{
+    "name": "dual_blink_cpp",
+    "version": "1.0.0",
+    "description": "Minimal example of a C++ library with a compile-time HAL shared by both frameworks, implementing a non-blocking blink, native to Arduino and ESP-IDF",
+    "keywords": [
+        "blink",
+        "hal",
+        "example"
+    ],
+    "homepage": "https://github.com/FMazz97/DualBlinkCpp",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/FMazz97/DualBlinkCpp.git"
+    },
+    "authors": [
+        {
+            "name": "FMazz97",
+            "url": "https://github.com/FMazz97",
+            "maintainer": true
+        }
+    ],
+    "license": "MIT",
+    "frameworks": [
+        "arduino",
+        "espidf"
+    ],
+    "platforms": "*",
+    "build": {
+        "flags": [
+            "-I src/core"
+        ]
+    },
+    "export": {
+        "exclude": [
+            "CMakeLists.txt",
+            "idf_component.yml",
+            "library.properties",
+            "examples/*/main/idf_component.yml"
+        ]
+    },
+    "examples": [
+        {
+            "name": "Arduino_BasicExample",
+            "base": "examples/BasicExample",
+            "files": [
+                "BasicExample.ino",
+                "platformio.ini"
+            ]
+        },
+        {
+            "name": "ESP-IDF_basic_example",
+            "base": "examples/basic_example",
+            "files": [
+                "main/main.cpp",
+                "main/CMakeLists.txt",
+                "CMakeLists.txt",
+                "platformio.ini",
+                "README.md"
+            ]
+        }
+    ]
+}
