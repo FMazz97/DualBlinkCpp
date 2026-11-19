@@ -4,7 +4,7 @@
 
 // Test pin configuration (adjust according to your hardware setup)
 #ifndef BLINK_PIN
-#define BLINK_PIN LED_BUILTIN
+#define BLINK_PIN 4
 #endif
 
 DualBlinkCpp led(BLINK_PIN, 500);
