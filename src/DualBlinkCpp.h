@@ -1,5 +1,5 @@
-#ifndef DUAL_BLINK_CPP_FACADE_H
-#define DUAL_BLINK_CPP_FACADE_H
+#ifndef DUAL_BLINK_CPP_H
+#define DUAL_BLINK_CPP_H
 
 #include "core/dual_blink_cpp.h"
 
@@ -18,4 +18,4 @@ class DualBlinkCpp {
     uint32_t getIntervalMs() const      { return _core.get_interval_ms(); }
 };
 
-#endif /* DUAL_BLINK_CPP_FACADE_H */
+#endif /* DUAL_BLINK_CPP_H */
