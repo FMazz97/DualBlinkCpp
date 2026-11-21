@@ -1,5 +1,5 @@
 dependencies:
-  fmazz97/DualBlinkCpp:
+  fmazz97/dual_blink_cpp:
     git: https://github.com/FMazz97/DualBlinkCpp.git
     version: "*"
     # override_path: "../../../" # for local deployment
