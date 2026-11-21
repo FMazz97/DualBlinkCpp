@@ -1,0 +1,28 @@
+#!/bin/sh
+# Blocks 'git push' of a branch or tag when the release rules are broken for the
+# PUSHED COMMIT (manifests read from the commit, not from the working tree).
+# Enable it in every clone:   git config core.hooksPath .githooks
+# Linux/macOS only run executable hooks; set the bit once, before committing it:
+#   git update-index --chmod=+x .githooks/pre-push
+PY=$(command -v python3 || command -v python || command -v py)
+[ -z "$PY" ] && { echo "pre-push: Python not found, check skipped"; exit 0; }
+
+# Tags created elsewhere (e.g. a GitHub Release made on the web) must be known
+# locally, otherwise the "greater than the highest tag" rule would miss them.
+git fetch --tags --quiet </dev/null 2>/dev/null \
+  || echo "pre-push: could not fetch remote tags, using the local ones"
+
+zero=0000000000000000000000000000000000000000
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$local_sha" = "$zero" ] && continue            # deleting a ref: nothing to check
+  case "$local_ref" in
+    refs/tags/*)  tag="${local_ref#refs/tags/}" ;;
+    refs/heads/*) tag="" ;;                          # branch mode
+    *) continue ;;
+  esac
+  commit=$(git rev-parse "$local_sha^{commit}") || exit 1   # works for annotated tags too
+  echo "pre-push: checking $local_ref"
+  "$PY" scripts/check_versions.py "$tag" --ref "$commit" || exit 1
+done
+exit 0

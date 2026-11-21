@@ -1,0 +1,61 @@
+name: Check manifest versions
+
+on:
+  push:
+    branches: ['**']
+    tags: ['*']
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-manifest-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0   # all tags are needed by the release rules
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+      # On a tag run the checkout is the tagged commit, so this reads the
+      # manifests as they were when the tag was created.
+      - name: Check manifest versions
+        env:
+          TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+        run: |
+          status=0
+          python scripts/check_versions.py "$TAG" --ref HEAD > check-output.txt 2>&1 || status=$?
+          cat check-output.txt
+          {
+            echo '### Manifest versions check'
+            echo
+            echo '```text'
+            cat check-output.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ]; then
+            # one annotation carrying the tag (if any) and the versions found
+            msg=$(sed ':a;N;$!ba;s/\n/%0A/g' check-output.txt)
+            echo "::error title=Manifest versions check failed::${msg}"
+          fi
+          exit "$status"
+
+  # Optional: undo a tag (and its GitHub Release) whose check failed.
+  # Remove this job if you prefer to be only warned.
+  revert-bad-tag:
+    needs: check-manifest-versions
+    if: ${{ always() && github.ref_type == 'tag' && needs.check-manifest-versions.result == 'failure' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TAG: ${{ github.ref_name }}
+    steps:
+      - name: Delete the release and the tag
+        run: |
+          echo "::error::Manifest versions check failed for tag $TAG: deleting release and tag."
+          echo "Tag \`$TAG\` deleted: the manifest versions check failed." >> "$GITHUB_STEP_SUMMARY"
+          gh release delete "$TAG" --cleanup-tag --yes \
+            || gh api -X DELETE "repos/$GH_REPO/git/refs/tags/$TAG"

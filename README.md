@@ -2,7 +2,7 @@
 
 A minimal, non-blocking blink library that runs natively on **Arduino** and **ESP-IDF**. It is the reference example of the [Dual-Framework Library Guide](https://github.com/FMazz97/dual-framework-library-guide).
 
-It does one thing, blinking a pin without blocking, so that the structure stays visible: one framework-agnostic core, a compile-time HAL for each framework, and an Arduino facade. The file-by-file walkthrough is in [Appendix E](https://github.com/FMazz97/dual-framework-library-guide/blob/main/appendix/E-minimal-example.md) of the guide.
+It does one thing, blinking a pin without blocking, so that the structure stays visible: one framework-agnostic core, a compile-time HAL for each framework, and an Arduino facade. The file-by-file walkthrough is in [Appendix E](https://github.com/FMazz97/dual-framework-library-guide/blob/main/appendices/E-minimal-example.md) of the guide. The repository also carries the files of the [version check](#version-check) that keeps the three manifests aligned, described in [Appendix F](https://github.com/FMazz97/dual-framework-library-guide/blob/main/appendices/F-manifest-version-check.md).
 
 > [!NOTE]
 > This repository is an example and is not published to any registry: package names are permanent once published (see [5.4](https://github.com/FMazz97/dual-framework-library-guide/blob/main/chapters/05-publishing.md#54-the-case-sensitivity-trap-platformios-immutable-package-binding) of the guide).
@@ -19,6 +19,14 @@ dual_blink_cpp/                      ← repository root = component root
 ├── idf_component.yml                ← ESP-IDF
 ├── library.properties               ← Arduino
 ├── library.json                     ← PlatformIO
+├── .gitattributes                   ← line endings (the hook stays LF)
+├── .githooks/
+│   └── pre-push                     ← local version check, before every push
+├── .github/
+│   └── workflows/
+│       └── check-versions.yml       ← the same check on GitHub
+├── scripts/
+│   └── check_versions.py            ← the version check
 ├── src/
 │   ├── DualBlinkCpp.h               ← Arduino facade
 │   ├── core/                        ← framework-agnostic core
@@ -66,6 +74,7 @@ framework = arduino          ; or espidf
 lib_deps = https://github.com/FMazz97/DualBlinkCpp.git
 ; lib_deps = symlink://../.. ; for local deployment
 ```
+
 ---
 
 ## Usage
@@ -77,7 +86,7 @@ lib_deps = https://github.com/FMazz97/DualBlinkCpp.git
 
 ## API
 
-The core uses `snake_case` and is used directly by ESP-IDF; the Arduino facade forwards every call with `camelCase` names (see: [naming convention](https://github.com/FMazz97/dual-framework-library-guide/blob/main/appendix/C-naming-convention.md)).
+The core uses `snake_case` and is used directly by ESP-IDF; the Arduino facade forwards every call with `camelCase` names (see: [naming convention](https://github.com/FMazz97/dual-framework-library-guide/blob/main/appendices/C-naming-convention.md)).
 
 | Core (ESP-IDF) | Facade (Arduino) | Description |
 | :--- | :--- | :--- |
@@ -89,6 +98,24 @@ The core uses `snake_case` and is used directly by ESP-IDF; the Arduino facade f
 
 ---
 
+## Version check
+
+A small check keeps the version in `library.properties`, `library.json` and `idf_component.yml` aligned and always increasing. It is a check, not a guarantee.
+
+| File | Role |
+| :--- | :--- |
+| `scripts/check_versions.py` | the check (Python 3, no dependencies) |
+| `.githooks/pre-push` | runs it locally before every push of a branch or tag |
+| `.github/workflows/check-versions.yml` | runs it on GitHub, and deletes a tag (and its Release) that fails the check |
+| `.gitattributes` | keeps the hook on LF line endings |
+
+> [!IMPORTANT]
+> Enable the hook once per clone: `git config core.hooksPath .githooks`
+
+These are development files: if you publish a package from your own copy, exclude them from it (see [Chapter 5](https://github.com/FMazz97/dual-framework-library-guide/blob/main/chapters/05-publishing.md)). Rules, setup and limits are in [Appendix F](https://github.com/FMazz97/dual-framework-library-guide/blob/main/appendices/F-manifest-version-check.md).
+
+---
+
 ## How it follows the guide
 
 | Rule | Guide |
@@ -97,7 +124,8 @@ The core uses `snake_case` and is used directly by ESP-IDF; the Arduino facade f
 | Agnostic core, compile-time HAL, Arduino facade | [Chapter 3](https://github.com/FMazz97/dual-framework-library-guide/blob/main/chapters/03-agnostic-core-hal-architecture.md) |
 | One example buildable with both toolchains | [Chapter 4](https://github.com/FMazz97/dual-framework-library-guide/blob/main/chapters/04-examples.md) |
 | Manifests for the three registries | [Chapter 5](https://github.com/FMazz97/dual-framework-library-guide/blob/main/chapters/05-publishing.md) |
-| Cooperating with the scheduler in a polling loop | [Appendix B](https://github.com/FMazz97/dual-framework-library-guide/blob/main/appendix/B-yield-watchdog.md) |
+| Cooperating with the scheduler in a polling loop | [Appendix B](https://github.com/FMazz97/dual-framework-library-guide/blob/main/appendices/B-yield-watchdog.md) |
+| Manifest versions aligned and increasing, checked before every push | [Appendix F](https://github.com/FMazz97/dual-framework-library-guide/blob/main/appendices/F-manifest-version-check.md) |
 
 ---
 
