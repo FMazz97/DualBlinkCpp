@@ -4,8 +4,17 @@
 # Enable it in every clone:   git config core.hooksPath .githooks
 # Linux/macOS only run executable hooks; set the bit once, before committing it:
 #   git update-index --chmod=+x .githooks/pre-push
-PY=$(command -v python3 || command -v python || command -v py)
-[ -z "$PY" ] && { echo "pre-push: Python not found, check skipped"; exit 0; }
+
+# Pick the first interpreter that actually runs: on Windows, 'python3' can be a
+# Microsoft Store stub that exists but is not Python.
+PY=
+for cand in python3 python py; do
+  if command -v "$cand" >/dev/null 2>&1 && "$cand" -c "import sys" >/dev/null 2>&1; then
+    PY=$cand
+    break
+  fi
+done
+[ -z "$PY" ] && { echo "pre-push: no working Python found, check skipped"; exit 0; }
 
 # Tags created elsewhere (e.g. a GitHub Release made on the web) must be known
 # locally, otherwise the "greater than the highest tag" rule would miss them.
