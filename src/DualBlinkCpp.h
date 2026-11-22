@@ -29,10 +29,10 @@
  *       they must never share a folder (here: `src/` and `src/core/`).
  */
 class DualBlinkCpp {
-  private:
+   private:
     dual_blink_cpp _core;  ///< Framework-agnostic core every method forwards to.
 
-  public:
+   public:
     /// @brief Constructs a blinker bound to a pin.
     /// @param pin GPIO number to drive (Arduino pin number or ESP-IDF gpio_num_t value).
     /// @param intervalMs Time between two toggles, in milliseconds (default 500).
@@ -40,38 +40,46 @@ class DualBlinkCpp {
     DualBlinkCpp(int pin, uint32_t intervalMs = 500) : _core(pin, intervalMs) {}
 
     /// @brief Configures the pin as output, drives it LOW and starts the interval timer.
+    /// @return `true` if the pin reads back LOW, `false` otherwise (see `setLevel()`).
     /// @note Touches the hardware. Name outside the prefix scheme (universal, like in Arduino).
-    void begin()                        { _core.begin(); }
+    bool begin() { return _core.begin(); }
 
     /// @brief Toggles the pin if at least `intervalMs` has elapsed since the last toggle.
     /// @details Must be called periodically, as often as the desired timing accuracy requires.
+    /// @return `true` if nothing had to be done or the toggle was confirmed, `false` if the
+    ///         pin did not read back the toggled level (see `setLevel()`).
     /// @note Never blocks: returns immediately when the interval has not elapsed yet.
-    ///       Touches the hardware only when it toggles.
-    void update()                       { _core.update(); }
+    ///       Touches the hardware only when it toggles. After a failed toggle the state is
+    ///       the level found on the pin, so the next toggle starts from it, one interval later.
+    bool update() { return _core.update(); }
 
-    /// @brief Forces the pin to a given level and records it as the current state.
+    /// @brief Forces the pin to a given level and confirms it by reading the pin back.
     /// @param level `true` for HIGH, `false` for LOW.
-    /// @note Pushes the state to a GPIO pin, which cannot answer: there is nothing
-    ///       to confirm, so it returns `void` (see the `set_*` contract).
+    /// @return `true` if the pin reads back the requested level, `false` otherwise.
+    /// @note Touches the hardware: writes the pin, then reads it back to confirm, so it
+    ///       reports success or failure through its return value (see the `set_*` contract).
+    ///       The state is always stored as read back from the pin: when the confirmation
+    ///       fails, it is restored to the level actually found on the pin.
+    ///       The readback confirms the level on the pin, not the load attached to it.
     ///       Does not reset the interval timer: the next automatic toggle keeps its
     ///       original schedule. Counterpart: `getLevel()`.
-    void setLevel(bool level)           { _core.set_level(level); }
+    bool setLevel(bool level) { return _core.set_level(level); }
 
-    /// @brief Returns the last level written to the pin.
+    /// @brief Returns the level read back from the pin by the last `setLevel()`.
     /// @return `true` if HIGH, `false` if LOW.
     /// @note No hardware access: returns the cached value, the pin is never read back.
     ///       Always `const`, cannot fail or block.
-    bool getLevel() const               { return _core.get_level(); }
+    bool getLevel() const { return _core.get_level(); }
 
     /// @brief Sets the time between two toggles.
     /// @param intervalMs New interval in milliseconds. Takes effect from the next `update()` call.
     /// @note No hardware access: only stores state. Counterpart: `getIntervalMs()`.
-    void setIntervalMs(uint32_t intervalMs)  { _core.set_interval_ms(intervalMs); }
+    void setIntervalMs(uint32_t intervalMs) { _core.set_interval_ms(intervalMs); }
 
     /// @brief Returns the current time between two toggles.
     /// @return Interval in milliseconds.
     /// @note No hardware access. Always `const`, cannot fail or block.
-    uint32_t getIntervalMs() const      { return _core.get_interval_ms(); }
+    uint32_t getIntervalMs() const { return _core.get_interval_ms(); }
 };
 
 #endif /* DUAL_BLINK_CPP_H */

@@ -1,8 +1,9 @@
 /// @file dual_blink_cpp_hal_arduino.h
 /// @brief Arduino HAL for the DualBlinkCpp core: GPIO and timing primitives.
 /// @details Arduino implementation of the HAL contract declared in dual_blink_cpp.h:
-///          DUAL_BLINK_CPP_PIN_OUTPUT(), DUAL_BLINK_CPP_PIN_WRITE() and
-///          DUAL_BLINK_CPP_MILLIS(), mapped to pinMode(), digitalWrite() and millis().
+///          DUAL_BLINK_CPP_PIN_OUTPUT(), DUAL_BLINK_CPP_PIN_WRITE(),
+///          DUAL_BLINK_CPP_PIN_READ() and DUAL_BLINK_CPP_MILLIS(), mapped to
+///          pinMode(), digitalWrite(), digitalRead() and millis().
 ///          The macros expand inside dual_blink_cpp member functions and read the
 ///          `_pin` member. No driver logic lives here — only hardware primitives.
 /// @author FMazz97 (https://github.com/FMazz97)
@@ -15,12 +16,17 @@
 #include <Arduino.h>
 
 // -----------------------------------------------------------------------------
-// Pin direction / output / timing primitives.
+// Pin direction / input-output / timing primitives.
 // -----------------------------------------------------------------------------
 /// @brief HAL contract: configures `_pin` as an output.
+/// @note Here pinMode(OUTPUT) is enough to read the pin back with digitalRead() on the
+///       cores this HAL targets (to be verified on every new architecture). ESP-IDF
+///       behaves differently: see dual_blink_cpp_hal_espidf.h.
 #define DUAL_BLINK_CPP_PIN_OUTPUT() pinMode(_pin, OUTPUT)
 /// @brief HAL contract: drives `_pin` HIGH or LOW.
 #define DUAL_BLINK_CPP_PIN_WRITE(level) digitalWrite(_pin, level)
+/// @brief HAL contract: returns the level present on `_pin` (non-zero = HIGH).
+#define DUAL_BLINK_CPP_PIN_READ() digitalRead(_pin)
 /// @brief HAL contract: free-running millisecond counter as `uint32_t`.
 #define DUAL_BLINK_CPP_MILLIS() (static_cast<uint32_t>(millis()))
 
