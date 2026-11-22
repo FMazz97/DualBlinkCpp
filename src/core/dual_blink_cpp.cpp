@@ -1,3 +1,12 @@
+/// @file dual_blink_cpp.cpp
+/// @brief Implementation of the framework-agnostic DualBlinkCpp core.
+/// @details All hardware access goes through the DUAL_BLINK_CPP_* macros of the HAL
+///          contract. Method documentation (including the prefix contract of each
+///          method) lives in dual_blink_cpp.h.
+/// @author FMazz97 (https://github.com/FMazz97)
+/// @see dual_blink_cpp.h, dual_blink_cpp_hal_arduino.h, dual_blink_cpp_hal_espidf.h
+/// @copyright MIT License
+
 #include "dual_blink_cpp.h"
 
 dual_blink_cpp::dual_blink_cpp(int pin, uint32_t interval_ms)
