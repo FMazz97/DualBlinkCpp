@@ -1,4 +1,4 @@
-version: "1.1.1"
+version: "1.1.2"
 description: Minimal example of a C++ library with a compile-time HAL shared by both frameworks, implementing a non-blocking blink, native to Arduino and ESP-IDF
 url: https://github.com/FMazz97/DualBlinkCpp
 repository: https://github.com/FMazz97/DualBlinkCpp.git
