@@ -112,7 +112,7 @@ A small check keeps the version in `library.properties`, `library.json` and `idf
 > [!IMPORTANT]
 > Enable the hook once per clone: `git config core.hooksPath .githooks`
 
-These are development files: if you publish a package from your own copy, exclude them from it (see [Chapter 5](https://github.com/FMazz97/dual-framework-library-guide/blob/main/chapters/05-publishing.md)). Rules, setup and limits are in [Appendix F](https://github.com/FMazz97/dual-framework-library-guide/blob/main/appendices/F-manifest-version-check.md).
+These are development files: if you publish a package from your own copy, exclude them from it (see [Chapter 5](https://github.com/FMazz97/dual-framework-library-guide/blob/main/chapters/05-publishing.md)). Rules, setup and limits are in [Appendix E](https://github.com/FMazz97/dual-framework-library-guide/blob/main/appendices/E-manifest-version-check.md).
 
 ---
 
@@ -124,8 +124,8 @@ These are development files: if you publish a package from your own copy, exclud
 | Agnostic core, compile-time HAL, Arduino facade | [Chapter 3](https://github.com/FMazz97/dual-framework-library-guide/blob/main/chapters/03-agnostic-core-hal-architecture.md) |
 | One example buildable with both toolchains | [Chapter 4](https://github.com/FMazz97/dual-framework-library-guide/blob/main/chapters/04-examples.md) |
 | Manifests for the three registries | [Chapter 5](https://github.com/FMazz97/dual-framework-library-guide/blob/main/chapters/05-publishing.md) |
-| Cooperating with the scheduler in a polling loop | [Appendix B](https://github.com/FMazz97/dual-framework-library-guide/blob/main/appendices/B-yield-watchdog.md) |
-| Manifest versions aligned and increasing, checked before every push | [Appendix F](https://github.com/FMazz97/dual-framework-library-guide/blob/main/appendices/F-manifest-version-check.md) |
+| Cooperating with the scheduler in a polling loop | [Appendix B](https://github.com/FMazz97/dual-framework-library-guide/blob/main/appendices/B-yield-interrupts.md) |
+| Manifest versions aligned and increasing, checked before every push | [Appendix E](https://github.com/FMazz97/dual-framework-library-guide/blob/main/appendices/E-manifest-version-check.md) |
 
 ---
 
