@@ -16,11 +16,7 @@ for cand in python3 python py; do
 done
 [ -z "$PY" ] && { echo "pre-push: no working Python found, check skipped"; exit 0; }
 
-# Tags created elsewhere (e.g. a GitHub Release made on the web) must be known
-# locally, otherwise the "greater than the highest tag" rule would miss them.
-git fetch --tags --quiet </dev/null 2>/dev/null \
-  || echo "pre-push: could not fetch remote tags, using the local ones"
-
+fetched=0
 zero=0000000000000000000000000000000000000000
 
 while read -r local_ref local_sha remote_ref remote_sha; do
@@ -30,6 +26,15 @@ while read -r local_ref local_sha remote_ref remote_sha; do
     refs/heads/*) tag="" ;;                          # branch mode
     *) continue ;;
   esac
+  # Tags created elsewhere (e.g. a GitHub Release made on the web) must be known
+  # locally, otherwise the "greater than the highest tag" rule would miss them.
+  # Done only when there is something to check: a push that deletes a ref must not
+  # fetch, or it would restore a tag that was just deleted locally.
+  if [ "$fetched" = 0 ]; then
+    git fetch --tags --quiet </dev/null 2>/dev/null \
+      || echo "pre-push: could not fetch remote tags, using the local ones"
+    fetched=1
+  fi
   commit=$(git rev-parse "$local_sha^{commit}") || exit 1   # works for annotated tags too
   echo "pre-push: checking $local_ref"
   "$PY" scripts/check_versions.py "$tag" --ref "$commit" || exit 1
