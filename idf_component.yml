@@ -17,9 +17,9 @@ files:
   exclude:
     - "library.properties"
     - "library.json"
-    - "src/DualBlinkCpp.h"                      # Arduino's facade *
-    - "src/hal/dual_blink_cpp_hal_arduino.h"    # Arduino's HAL *
+    - "src/DualBlinkCpp.h"                      # * Arduino's facade
+    - "src/hal/dual_blink_cpp_hal_arduino.h"    # * Arduino's HAL
     - ".gitattributes"
-    - ".githooks/*"
-    - ".github/*"
-    - "scripts/*"
+    - ".githooks/**"
+    - ".github/**"
+    - "scripts/**"

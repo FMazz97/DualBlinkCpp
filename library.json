@@ -37,9 +37,9 @@
             "library.properties",
             "examples/*/main/idf_component.yml",
             ".gitattributes",
-            ".githooks/*",
-            ".github/*",
-            "scripts/*"
+            ".githooks",
+            ".github",
+            "scripts"
         ]
     },
     "examples": [
